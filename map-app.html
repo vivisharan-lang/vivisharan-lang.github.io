@@ -15,38 +15,8 @@
 
     #map {
       height: 100vh;
-      width: 100%;
     }
 
-    /* Popup styling */
-    .popup {
-      font-family: 'Poppins', sans-serif;
-      max-width: 220px;
-    }
-
-    .popup-title {
-      font-weight: 600;
-      font-size: 16px;
-    }
-
-    .popup-location {
-      font-size: 12px;
-      color: #555;
-      margin-bottom: 5px;
-    }
-
-    .popup-text {
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .popup img {
-      width: 100%;
-      border-radius: 8px;
-      margin-top: 5px;
-    }
-
-    /* Floating info box */
     .info-box {
       position: absolute;
       top: 20px;
@@ -54,9 +24,81 @@
       background: #D3DFF2;
       padding: 12px 16px;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      font-size: 14px;
       z-index: 1000;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    /* POPUP CARD */
+    .popup {
+      width: 240px;
+    }
+
+    .popup-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .popup-location {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .popup-text {
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    /* SLIDER */
+    .slider {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .slider img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: none;
+    }
+
+    .slider img.active {
+      display: block;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 5px 8px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .left {
+      left: 5px;
+    }
+
+    .right {
+      right: 5px;
+    }
+
+    .delete-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 6px;
+      background: #B1B2AE;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
   </style>
@@ -65,7 +107,7 @@
 <body>
 
 <div class="info-box">
-  🌍 Click anywhere to add a memory
+  🌍 Click map to add memory
 </div>
 
 <div id="map"></div>
@@ -74,88 +116,116 @@
 
 <script>
 
-  // 🔒 Set to false before publishing
-  const allowAddingPins = true;
+const allowAddingPins = true;
 
-  let savedPins = JSON.parse(localStorage.getItem("pins")) || [];
+let savedPins = JSON.parse(localStorage.getItem("pins")) || [];
 
-  var map = L.map('map').setView([20, 0], 2);
+var map = L.map('map').setView([20, 0], 2);
 
-  // 🌍 English-style clean map
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CartoDB'
-  }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-  // 📍 Custom marker icon
-  var customIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-    iconSize: [30, 30]
-  });
+var customIcon = L.icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+  iconSize: [30, 30]
+});
 
-  function addMarker(pin) {
+function createSlider(images, id) {
+  let imgs = images.map((img, i) => 
+    `<img src="${img.trim()}" class="${i === 0 ? 'active' : ''}">`
+  ).join("");
 
-    let imagesHTML = "";
+  return `
+    <div class="slider" id="slider-${id}">
+      ${imgs}
+      ${images.length > 1 ? `
+        <button class="arrow left" onclick="changeSlide('${id}', -1)">◀</button>
+        <button class="arrow right" onclick="changeSlide('${id}', 1)">▶</button>
+      ` : ''}
+    </div>
+  `;
+}
 
-    pin.images.forEach(img => {
-      imagesHTML += `<img src="${img.trim()}">`;
-    });
+function changeSlide(id, direction) {
+  let slider = document.getElementById("slider-" + id);
+  let imgs = slider.querySelectorAll("img");
+  let index = [...imgs].findIndex(img => img.classList.contains("active"));
 
-    var popupContent = `
-      <div class="popup">
-        <div class="popup-title">${pin.title}</div>
-        <div class="popup-location">${pin.city}, ${pin.country}</div>
-        <div class="popup-text">${pin.text}</div>
-        ${imagesHTML}
-      </div>
-    `;
+  imgs[index].classList.remove("active");
+  index = (index + direction + imgs.length) % imgs.length;
+  imgs[index].classList.add("active");
+}
 
-    L.marker([pin.lat, pin.lng], {icon: customIcon})
-      .addTo(map)
-      .bindPopup(popupContent);
-  }
+function addMarker(pin, index) {
 
-  // Load pins
-  savedPins.forEach(pin => addMarker(pin));
+  let images = pin.images || [pin.image];
 
-  // Add pins
-  if (allowAddingPins) {
+  let slider = createSlider(images, index);
 
-    map.on('click', async function(e) {
+  let popupContent = `
+    <div class="popup">
+      <div class="popup-title">${pin.title}</div>
+      <div class="popup-location">${pin.city || ""}, ${pin.country || ""}</div>
+      <div class="popup-text">${pin.text}</div>
+      ${slider}
+      <button class="delete-btn" onclick="deletePin(${index})">Delete</button>
+    </div>
+  `;
 
-      var title = prompt("Place name:");
-      var text = prompt("Memory:");
-      var images = prompt("Image URLs (comma separated):");
+  L.marker([pin.lat, pin.lng], {icon: customIcon})
+    .addTo(map)
+    .bindPopup(popupContent);
+}
 
-      if (!title) return;
+// Load pins
+savedPins.forEach((pin, index) => addMarker(pin, index));
 
-      // 🌍 Get city + country
-      let response = await fetch(
+function deletePin(index) {
+  if (!confirm("Delete this pin?")) return;
+
+  savedPins.splice(index, 1);
+  localStorage.setItem("pins", JSON.stringify(savedPins));
+  location.reload();
+}
+
+// Add new pin
+if (allowAddingPins) {
+  map.on('click', async function(e) {
+
+    let title = prompt("Place name:");
+    let text = prompt("Memory:");
+    let images = prompt("Image URLs (comma separated):");
+
+    if (!title) return;
+
+    let city = "Unknown";
+    let country = "";
+
+    try {
+      let res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`
       );
+      let data = await res.json();
 
-      let data = await response.json();
+      city = data.address.city || data.address.town || data.address.village || "Unknown";
+      country = data.address.country || "";
+    } catch {}
 
-      let city = data.address.city || data.address.town || data.address.village || "Unknown";
-      let country = data.address.country || "";
+    let newPin = {
+      lat: e.latlng.lat,
+      lng: e.latlng.lng,
+      title,
+      text,
+      images: images.split(","),
+      city,
+      country
+    };
 
-      var newPin = {
-        lat: e.latlng.lat,
-        lng: e.latlng.lng,
-        title: title,
-        text: text,
-        images: images.split(","),
-        city: city,
-        country: country
-      };
+    savedPins.push(newPin);
+    localStorage.setItem("pins", JSON.stringify(savedPins));
 
-      savedPins.push(newPin);
-      localStorage.setItem("pins", JSON.stringify(savedPins));
-
-      addMarker(newPin);
-
-    });
-
-  }
+    addMarker(newPin, savedPins.length - 1);
+  });
+}
 
 </script>
 

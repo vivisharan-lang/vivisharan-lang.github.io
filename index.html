@@ -10,7 +10,7 @@
       font-family: 'Poppins', sans-serif;
       margin: 0;
       background-color: #93A4C1;
-      color: #1f2a44;
+      color: #000;
       text-align: center;
     }
 
@@ -21,64 +21,36 @@
     }
 
     h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
+      font-size: 36px;
     }
 
     .intro {
-      color: #2f3e5c;
       margin-bottom: 40px;
-      font-size: 18px;
     }
 
     .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
 
     .card {
       background: #D3DFF2;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      padding: 20px;
+      border-radius: 12px;
+      width: 300px;
       text-align: left;
-      transition: transform 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card h2 {
-      margin-top: 0;
-    }
-
-    .card p {
-      color: #2f3e5c;
     }
 
     .btn {
       display: inline-block;
-      margin-top: 15px;
-      padding: 10px 15px;
+      margin-top: 10px;
+      padding: 8px 12px;
       background: #B1B2AE;
-      color: #1f2a44;
-      border-radius: 8px;
+      color: black;
+      border-radius: 6px;
       text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .btn:hover {
-      opacity: 0.85;
-    }
-
-    /* mobile friendly */
-    @media (max-width: 600px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
     }
 
   </style>
@@ -88,46 +60,36 @@
 
   <div class="container">
 
-    <!-- INTRO -->
     <h1>Hi, I'm Vishi 👋</h1>
+
     <p class="intro">
-      Mechanical Engineer transitioning into Cloud Engineering.  
-      I build cloud-based applications and software projects.
+      Mechanical Engineer transitioning into Cloud Engineering.
     </p>
 
-    <!-- CARDS -->
     <div class="grid">
 
       <div class="card">
         <h2>☁️ Cloud Engineering</h2>
-        <p>
-          Projects using Google Cloud Platform, Docker, and backend APIs.
-        </p>
+        <p>Google Cloud, Docker, APIs</p>
         <a class="btn" href="cloud.html">View Projects</a>
       </div>
 
       <div class="card">
         <h2>💻 Programming</h2>
-        <p>
-          Software projects including web apps and creative tools.
-        </p>
-        <a class="btn" href="programming.html">View Projects</a>
+        <p>Apps and software projects</p>
+        <a class="btn" href="programming.html">View</a>
       </div>
 
       <div class="card">
         <h2>📁 Experience</h2>
-        <p>
-          Past work, internships, and events I have been part of.
-        </p>
+        <p>Work and events</p>
         <a class="btn" href="experience.html">View</a>
       </div>
 
       <div class="card">
         <h2>👤 About Me</h2>
-        <p>
-          Learn more about my background and goals.
-        </p>
-        <a class="btn" href="about.html">Read More</a>
+        <p>Background and goals</p>
+        <a class="btn" href="about.html">Read</a>
       </div>
 
     </div>

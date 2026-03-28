@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Travel Memory Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+
+    img {
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+  // Load saved pins
+  let savedPins = JSON.parse(localStorage.getItem("pins")) || [];
+
+  // Create map
+  var map = L.map('map').setView([20, 0], 2);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  // Function to add marker
+  function addMarker(pin) {
+    var popupContent = `
+      <b>${pin.title}</b><br>
+      ${pin.text}<br>
+      <img src="${pin.image}" width="200">
+    `;
+
+    L.marker([pin.lat, pin.lng])
+      .addTo(map)
+      .bindPopup(popupContent);
+  }
+
+  // Load existing pins on startup
+  savedPins.forEach(pin => addMarker(pin));
+
+  // Add new pin on click
+  map.on('click', function(e) {
+
+    var title = prompt("Enter place name:");
+    var text = prompt("Write your memory:");
+    var image = prompt("Paste image URL:");
+
+    if (!title) return;
+
+    var newPin = {
+      lat: e.latlng.lat,
+      lng: e.latlng.lng,
+      title: title,
+      text: text,
+      image: image
+    };
+
+    // Save to array
+    savedPins.push(newPin);
+
+    // Save to localStorage
+    localStorage.setItem("pins", JSON.stringify(savedPins));
+
+    // Add marker to map
+    addMarker(newPin);
+
+  });
+
+</script>
+
+</body>
+</html>

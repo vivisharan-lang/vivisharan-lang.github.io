@@ -63,4 +63,76 @@
       margin-top: 15px;
       padding: 10px 15px;
       background: #B1B2AE;
-      color:
+      color: #1f2a44;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
+    /* mobile friendly */
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- INTRO -->
+    <h1>Hi, I'm Vishi 👋</h1>
+    <p class="intro">
+      Mechanical Engineer transitioning into Cloud Engineering.  
+      I build cloud-based applications and software projects.
+    </p>
+
+    <!-- CARDS -->
+    <div class="grid">
+
+      <div class="card">
+        <h2>☁️ Cloud Engineering</h2>
+        <p>
+          Projects using Google Cloud Platform, Docker, and backend APIs.
+        </p>
+        <a class="btn" href="cloud.html">View Projects</a>
+      </div>
+
+      <div class="card">
+        <h2>💻 Programming</h2>
+        <p>
+          Software projects including web apps and creative tools.
+        </p>
+        <a class="btn" href="programming.html">View Projects</a>
+      </div>
+
+      <div class="card">
+        <h2>📁 Experience</h2>
+        <p>
+          Past work, internships, and events I have been part of.
+        </p>
+        <a class="btn" href="experience.html">View</a>
+      </div>
+
+      <div class="card">
+        <h2>👤 About Me</h2>
+        <p>
+          Learn more about my background and goals.
+        </p>
+        <a class="btn" href="about.html">Read More</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

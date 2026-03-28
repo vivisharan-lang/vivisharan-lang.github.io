@@ -4,7 +4,6 @@
   <title>Travel Memory Map</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
   <style>
@@ -19,24 +18,45 @@
       width: 100%;
     }
 
+    /* Popup styling */
     .popup {
       font-family: 'Poppins', sans-serif;
+      max-width: 220px;
     }
 
-    .popup img {
-      margin-top: 8px;
-      border-radius: 8px;
-      width: 180px;
-    }
-
-    .title {
+    .popup-title {
       font-weight: 600;
       font-size: 16px;
     }
 
-    .location {
+    .popup-location {
       font-size: 12px;
-      color: gray;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    .popup-text {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .popup img {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+
+    /* Floating info box */
+    .info-box {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #D3DFF2;
+      padding: 12px 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      font-size: 14px;
+      z-index: 1000;
     }
 
   </style>
@@ -44,48 +64,60 @@
 
 <body>
 
+<div class="info-box">
+  🌍 Click anywhere to add a memory
+</div>
+
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
-  // 🔒 SET THIS
-  const allowAddingPins = true; // change to false if you want only viewing
+  // 🔒 Set to false before publishing
+  const allowAddingPins = true;
 
   let savedPins = JSON.parse(localStorage.getItem("pins")) || [];
 
   var map = L.map('map').setView([20, 0], 2);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
+  // 🌍 English-style clean map
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CartoDB'
   }).addTo(map);
+
+  // 📍 Custom marker icon
+  var customIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [30, 30]
+  });
 
   function addMarker(pin) {
 
     let imagesHTML = "";
+
     pin.images.forEach(img => {
-      imagesHTML += `<img src="${img.trim()}"><br>`;
+      imagesHTML += `<img src="${img.trim()}">`;
     });
 
     var popupContent = `
       <div class="popup">
-        <div class="title">${pin.title}</div>
-        <div class="location">${pin.city}, ${pin.country}</div>
-        <p>${pin.text}</p>
+        <div class="popup-title">${pin.title}</div>
+        <div class="popup-location">${pin.city}, ${pin.country}</div>
+        <div class="popup-text">${pin.text}</div>
         ${imagesHTML}
       </div>
     `;
 
-    L.marker([pin.lat, pin.lng])
+    L.marker([pin.lat, pin.lng], {icon: customIcon})
       .addTo(map)
       .bindPopup(popupContent);
   }
 
-  // Load existing pins
+  // Load pins
   savedPins.forEach(pin => addMarker(pin));
 
-  // Add new pins
+  // Add pins
   if (allowAddingPins) {
 
     map.on('click', async function(e) {
@@ -96,8 +128,11 @@
 
       if (!title) return;
 
-      // 🌍 Get city name
-      let response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
+      // 🌍 Get city + country
+      let response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`
+      );
+
       let data = await response.json();
 
       let city = data.address.city || data.address.town || data.address.village || "Unknown";

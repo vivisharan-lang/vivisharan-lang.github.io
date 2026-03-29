@@ -10,11 +10,29 @@
     body { margin: 0; font-family: Arial; }
     #map { height: 100vh; }
 
+    .popup {
+      max-width: 250px;
+    }
+
     .popup img {
       width: 100%;
+      height: 150px;
+      object-fit: cover;
       border-radius: 10px;
       margin-top: 8px;
     }
+
+    .popup button {
+      margin-top: 8px;
+      margin-right: 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .edit-btn { background: #3498db; color: white; }
+    .delete-btn { background: #e74c3c; color: white; }
   </style>
 </head>
 
@@ -24,12 +42,12 @@
 
 <script type="module">
 
-// 🔥 Firebase (MODERN VERSION)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } 
-from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { 
+  getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc 
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// ✅ YOUR CONFIG (CORRECT)
+// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyA4gr4Esz5bOST3zHwQhfWbMVdHP9VYEvc",
   authDomain: "map-app-cc49d.firebaseapp.com",
@@ -39,7 +57,6 @@ const firebaseConfig = {
   appId: "1:898386995342:web:b8b1723535380b04a4c1df"
 };
 
-// Init
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -48,37 +65,56 @@ const map = L.map('map').setView([20, 0], 2);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-// 📍 Load pins
+// 📍 LOAD PINS
 async function loadPins() {
-  const querySnapshot = await getDocs(collection(db, "pins"));
+  const snapshot = await getDocs(collection(db, "pins"));
 
-  querySnapshot.forEach((doc) => {
-    addMarker(doc.data());
+  snapshot.forEach(docSnap => {
+    addMarker(docSnap.data(), docSnap.id);
   });
 }
 
-// 📌 Add marker
-function addMarker(data) {
-  let imagesHTML = "";
+// 📌 ADD MARKER
+function addMarker(data, id) {
+  let currentImage = 0;
 
-  if (data.images && data.images.length > 0) {
-    data.images.forEach(img => {
-      imagesHTML += `<img src="${img}">`;
-    });
+  function getImageHTML() {
+    if (!data.images || data.images.length === 0) return "";
+    return `<img src="${data.images[currentImage]}">`;
   }
 
-  L.marker([data.lat, data.lng])
-    .addTo(map)
-    .bindPopup(`
+  const marker = L.marker([data.lat, data.lng]).addTo(map);
+
+  function updatePopup() {
+    marker.bindPopup(`
       <div class="popup">
         <b>${data.title}</b><br>
         ${data.text || ""}
-        ${imagesHTML}
+
+        ${getImageHTML()}
+
+        <br>
+        <button onclick="nextImage('${id}')">Next</button>
+
+        <br>
+        <button class="edit-btn" onclick="editPin('${id}')">Edit</button>
+        <button class="delete-btn" onclick="deletePin('${id}')">Delete</button>
       </div>
     `);
+  }
+
+  updatePopup();
+
+  // store globally for slideshow
+  window[`pin_${id}`] = {
+    data,
+    marker,
+    updatePopup,
+    currentImage
+  };
 }
 
-// ➕ Add pin
+// ➕ ADD PIN
 map.on("click", async function(e) {
 
   const title = prompt("Title:");
@@ -90,22 +126,59 @@ map.on("click", async function(e) {
   const pin = {
     lat: e.latlng.lat,
     lng: e.latlng.lng,
-    title: title,
-    text: text,
+    title,
+    text,
     images: images ? images.split(",") : []
   };
 
   try {
-    await addDoc(collection(db, "pins"), pin);
-    addMarker(pin); // instant display
+    const docRef = await addDoc(collection(db, "pins"), pin);
+    addMarker(pin, docRef.id);
   } catch (error) {
-    console.error("FULL ERROR:", error);
     alert(error.message);
   }
 
 });
 
-// Start
+// 🖼️ NEXT IMAGE (SLIDESHOW)
+window.nextImage = function(id) {
+  const pinObj = window[`pin_${id}`];
+
+  if (!pinObj.data.images || pinObj.data.images.length === 0) return;
+
+  pinObj.currentImage =
+    (pinObj.currentImage + 1) % pinObj.data.images.length;
+
+  pinObj.updatePopup();
+};
+
+// 🗑️ DELETE PIN
+window.deletePin = async function(id) {
+  if (!confirm("Delete this pin?")) return;
+
+  await deleteDoc(doc(db, "pins", id));
+  location.reload();
+};
+
+// ✏️ EDIT PIN
+window.editPin = async function(id) {
+  const pinObj = window[`pin_${id}`];
+  const data = pinObj.data;
+
+  const newTitle = prompt("New title:", data.title);
+  const newText = prompt("New description:", data.text);
+  const newImages = prompt("Image URLs:", data.images.join(","));
+
+  await updateDoc(doc(db, "pins", id), {
+    title: newTitle,
+    text: newText,
+    images: newImages.split(",")
+  });
+
+  location.reload();
+};
+
+// START
 loadPins();
 
 </script>

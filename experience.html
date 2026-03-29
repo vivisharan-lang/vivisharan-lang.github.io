@@ -3,98 +3,170 @@
 <head>
   <title>Experience</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- SAME FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
+    * {
       margin: 0;
-      background-color: #93A4C1;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .container {
+    body {
+      font-family: 'Inter', sans-serif;
+      color: white;
+    }
+
+    /* BACKGROUND */
+    .hero {
+      min-height: 100vh;
+      background: url("IMG_5946.jpg") no-repeat center center/cover;
+      position: relative;
+      padding: 60px 20px;
+    }
+
+    /* OVERLAY */
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.45)
+      );
+      top: 0;
+      left: 0;
+    }
+
+    /* CONTENT */
+    .content {
+      position: relative;
+      z-index: 2;
       max-width: 900px;
       margin: auto;
-      padding: 40px 20px;
     }
 
-    .card {
-      background: #D3DFF2;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
+    /* TITLE */
     h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 50px;
       text-align: center;
+      margin-bottom: 40px;
     }
 
-    .back {
-      text-decoration: none;
-      display: inline-block;
-      margin-bottom: 20px;
-      color: black;
+    /* CARD */
+    .card {
+      background: rgba(255, 255, 255, 0.35); /* 👈 clearer */
+      backdrop-filter: blur(14px);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.4);
+      transition: 0.3s;
     }
 
-    img {
+    .card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    .card p {
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 10px;
+    }
+
+    /* IMAGES */
+    .card img {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 12px;
       margin-top: 10px;
     }
+
+    /* BACK BUTTON */
+    .back {
+      display: inline-block;
+      margin-bottom: 30px;
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+    }
+
+    .back:hover {
+      opacity: 1;
+    }
+
   </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="hero">
 
-  <a class="back" href="index.html">← Back</a>
+  <div class="overlay"></div>
 
-  <h1>📁 Experience</h1>
+  <div class="content">
 
-  <!-- CURRENT JOB -->
-  <div class="card">
-    <h2>📡 Ericsson — Mechanical Developer</h2>
+    <a class="back" href="index.html">← Back</a>
 
-    <p>
-      Currently working as a mechanical developer at Ericsson in Stockholm, contributing to the design and development of telecom hardware solutions.
-    </p>
+    <h1>Experience</h1>
 
-    <p>
-      I collaborate across teams and am increasingly exploring the intersection between hardware and cloud technologies.
-    </p>
-  </div>
+    <!-- CURRENT JOB -->
+    <div class="card">
+      <h2>Ericsson — Mechanical Developer</h2>
 
-  <!-- EXTRA -->
-  <div class="card">
-    <h2>🌟 Extra Activities</h2>
+      <p>
+        Currently working as a mechanical developer at Ericsson in Stockholm, contributing to the design and development of telecom hardware solutions.
+      </p>
 
-    <h3>GenNext</h3>
-    <p>
-      Participated in GenNext initiatives including leadership events and networking opportunities.
-    </p>
+      <p>
+        I collaborate across teams and am increasingly exploring the intersection between hardware and cloud technologies.
+      </p>
+    </div>
 
-    <p>Panel discussion & leadership lunch:</p>
-    <img src="YOUR_IMAGE_URL_HERE">
-    <img src="YOUR_IMAGE_URL_HERE">
+    <!-- EXTRA -->
+    <div class="card">
+      <h2>Extra Activities</h2>
 
-    <h3>Other Panels</h3>
-    <p>
-      Participated in additional panel discussions, contributing perspectives and engaging in industry conversations.
-    </p>
-  </div>
+      <h3>GenNext</h3>
+      <p>
+        Participated in GenNext initiatives including leadership events and networking opportunities.
+      </p>
 
-  <!-- PAST -->
-  <div class="card">
-    <h2>🧑‍💼 Past Experience</h2>
+      <p>Panel discussion & leadership lunch:</p>
+      <img src="YOUR_IMAGE_URL_HERE">
+      <img src="YOUR_IMAGE_URL_HERE">
 
-    <p>
-      Includes part-time roles alongside studies and my master thesis work.
-    </p>
+      <h3>Other Panels</h3>
+      <p>
+        Participated in additional panel discussions, contributing perspectives and engaging in industry conversations.
+      </p>
+    </div>
 
-    <p>
-      These experiences helped build a strong foundation in both technical problem solving and professional collaboration.
-    </p>
+    <!-- PAST -->
+    <div class="card">
+      <h2>Past Experience</h2>
+
+      <p>
+        Includes part-time roles alongside studies and my master thesis work.
+      </p>
+
+      <p>
+        These experiences helped build a strong foundation in both technical problem solving and professional collaboration.
+      </p>
+    </div>
+
   </div>
 
 </div>

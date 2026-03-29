@@ -1,218 +1,191 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Travel Memory Map</title>
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <title>Travel Map</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
 
   <style>
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #93A4C1;
+      font-family: 'Inter', sans-serif;
     }
 
     #map {
       height: 100vh;
-    }
-
-    .popup {
-      width: 240px;
-    }
-
-    .popup-title {
-      font-weight: 600;
-      font-size: 16px;
-    }
-
-    .popup-location {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
-    .popup-text {
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .slider img {
       width: 100%;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 8px;
-      display: none;
     }
 
-    .slider img.active {
-      display: block;
+    /* POPUP */
+    .popup {
+      max-width: 300px;
+    }
+
+    .popup h3 {
+      margin: 0;
+    }
+
+    .popup p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    /* SLIDESHOW */
+    .slider {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .slides {
+      display: flex;
+      transition: transform 0.4s ease;
+    }
+
+    .slides img {
+      width: 100%;
+      flex-shrink: 0;
+      border-radius: 10px;
     }
 
     .arrow {
-      background: rgba(0,0,0,0.5);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
       color: white;
       border: none;
-      padding: 5px;
+      padding: 5px 10px;
       cursor: pointer;
+      border-radius: 5px;
     }
 
-    .btn {
-      margin-top: 5px;
-      padding: 6px;
-      width: 100%;
-      border: none;
-      border-radius: 6px;
-      background: #B1B2AE;
-      cursor: pointer;
-    }
+    .left { left: 5px; }
+    .right { right: 5px; }
 
   </style>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body>
 
 <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
+  // 🔐 ADMIN MODE (set to true if YOU want to add pins)
+  const isAdmin = false;
 
-const allowAddingPins = true;
+  // 🌍 MAP
+  const map = L.map('map').setView([20, 0], 2);
 
-let savedPins = JSON.parse(localStorage.getItem("pins")) || [];
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
 
-var map = L.map('map').setView([20, 0], 2);
+  // 📍 PINS (THIS IS YOUR DATABASE)
+  const pins = [
+    {
+      lat: 37.5665,
+      lng: 126.9780,
+      title: "Seoul",
+      text: "Amazing food and memories 💕",
+      images: [
+        "https://i.imgur.com/yourimage1.jpg",
+        "https://i.imgur.com/yourimage2.jpg"
+      ]
+    }
+  ];
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+  // 🧱 CREATE POPUP
+  function createPopup(pin) {
+    const div = document.createElement("div");
+    div.className = "popup";
 
-var customIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-  iconSize: [30, 30]
-});
+    div.innerHTML = `
+      <h3>${pin.title}</h3>
+      <p>${pin.text}</p>
+    `;
 
-// SLIDER
-function createSlider(images, id) {
-  return `
-    <div class="slider" id="slider-${id}">
-      ${images.map((img, i) =>
-        `<img src="${img.trim()}" class="${i === 0 ? 'active' : ''}">`
-      ).join("")}
-      ${images.length > 1 ? `
-        <button class="arrow" onclick="changeSlide(${id}, -1)">◀</button>
-        <button class="arrow" onclick="changeSlide(${id}, 1)">▶</button>
-      ` : ""}
-    </div>
-  `;
-}
+    // SLIDESHOW
+    if (pin.images.length > 0) {
+      let index = 0;
 
-function changeSlide(id, dir) {
-  let slider = document.getElementById("slider-" + id);
-  let imgs = slider.querySelectorAll("img");
-  let index = [...imgs].findIndex(img => img.classList.contains("active"));
+      const slider = document.createElement("div");
+      slider.className = "slider";
 
-  imgs[index].classList.remove("active");
-  index = (index + dir + imgs.length) % imgs.length;
-  imgs[index].classList.add("active");
-}
+      const slides = document.createElement("div");
+      slides.className = "slides";
 
-// ADD MARKER
-function addMarker(pin, index) {
+      pin.images.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        slides.appendChild(img);
+      });
 
-  let images = pin.images || [];
+      const left = document.createElement("button");
+      left.innerHTML = "‹";
+      left.className = "arrow left";
 
-  let popupContent = `
-    <div class="popup">
-      <div class="popup-title">${pin.title}</div>
-      <div class="popup-location">${pin.city || ""}, ${pin.country || ""}</div>
-      <div class="popup-text">${pin.text}</div>
+      const right = document.createElement("button");
+      right.innerHTML = "›";
+      right.className = "arrow right";
 
-      ${createSlider(images, index)}
+      function updateSlide() {
+        slides.style.transform = `translateX(-${index * 100}%)`;
+      }
 
-      <button class="btn" onclick="editPin(${index})">Edit</button>
-      <button class="btn" onclick="deletePin(${index})">Delete</button>
-    </div>
-  `;
+      left.onclick = () => {
+        index = (index - 1 + pin.images.length) % pin.images.length;
+        updateSlide();
+      };
 
-  L.marker([pin.lat, pin.lng], {icon: customIcon})
-    .addTo(map)
-    .bindPopup(popupContent);
-}
+      right.onclick = () => {
+        index = (index + 1) % pin.images.length;
+        updateSlide();
+      };
 
-// LOAD PINS
-savedPins.forEach((pin, index) => addMarker(pin, index));
+      slider.appendChild(slides);
+      slider.appendChild(left);
+      slider.appendChild(right);
 
-// DELETE
-function deletePin(index) {
-  if (!confirm("Delete this pin?")) return;
+      div.appendChild(slider);
+    }
 
-  savedPins.splice(index, 1);
-  localStorage.setItem("pins", JSON.stringify(savedPins));
-  location.reload();
-}
+    return div;
+  }
 
-// ✏️ EDIT
-function editPin(index) {
-
-  let pin = savedPins[index];
-
-  let newTitle = prompt("Edit title:", pin.title);
-  let newText = prompt("Edit text:", pin.text);
-  let newImages = prompt("Edit images (comma separated):", pin.images.join(","));
-
-  if (!newTitle) return;
-
-  savedPins[index] = {
-    ...pin,
-    title: newTitle,
-    text: newText,
-    images: newImages.split(",")
-  };
-
-  localStorage.setItem("pins", JSON.stringify(savedPins));
-  location.reload();
-}
-
-// ADD NEW PIN
-if (allowAddingPins) {
-  map.on('click', async function(e) {
-
-    let title = prompt("Place name:");
-    let text = prompt("Memory:");
-    let images = prompt("Image URLs (comma separated):");
-
-    if (!title) return;
-
-    let city = "Unknown";
-    let country = "";
-
-    try {
-      let res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`
-      );
-      let data = await res.json();
-
-      city = data.address?.city || data.address?.town || data.address?.village || "Unknown";
-      country = data.address?.country || "";
-    } catch {}
-
-    let newPin = {
-      lat: e.latlng.lat,
-      lng: e.latlng.lng,
-      title,
-      text,
-      images: images.split(","),
-      city,
-      country
-    };
-
-    savedPins.push(newPin);
-    localStorage.setItem("pins", JSON.stringify(savedPins));
-
-    location.reload();
+  // 📍 LOAD PINS
+  pins.forEach(pin => {
+    L.marker([pin.lat, pin.lng])
+      .addTo(map)
+      .bindPopup(createPopup(pin));
   });
-}
 
+  // ➕ ADD PINS (ONLY IF ADMIN)
+  if (isAdmin) {
+    map.on("click", function(e) {
+      const title = prompt("Title:");
+      const text = prompt("Description:");
+      const image = prompt("Image URL:");
+
+      if (!title) return;
+
+      const newPin = {
+        lat: e.latlng.lat,
+        lng: e.latlng.lng,
+        title,
+        text,
+        images: [image]
+      };
+
+      pins.push(newPin);
+      location.reload();
+    });
+  }
 </script>
 
 </body>

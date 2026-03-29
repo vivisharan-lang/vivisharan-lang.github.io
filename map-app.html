@@ -3,69 +3,22 @@
 <head>
   <title>Travel Map</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-    }
+    body { margin: 0; font-family: Arial; }
+    #map { height: 100vh; }
 
-    #map {
-      height: 100vh;
+    .popup img {
       width: 100%;
-    }
-
-    .popup {
-      max-width: 320px;
-    }
-
-    .popup h3 {
-      margin: 0;
-    }
-
-    .popup p {
-      font-size: 14px;
-      color: #555;
-    }
-
-    /* SLIDESHOW */
-    .slider {
-      position: relative;
-      overflow: hidden;
-      border-radius: 12px;
+      border-radius: 10px;
       margin-top: 10px;
     }
-
-    .slides {
-      display: flex;
-      transition: transform 0.4s ease;
-    }
-
-    .slides img {
-      width: 100%;
-      flex-shrink: 0;
-      border-radius: 12px;
-    }
-
-    .arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.4);
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-
-    .left { left: 5px; }
-    .right { right: 5px; }
 
     .btn {
-      margin-top: 10px;
-      padding: 6px 10px;
+      margin-top: 8px;
+      padding: 5px 10px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -75,9 +28,6 @@
     .edit { background: #d3dff2; }
     .delete { background: #f2b3b3; }
   </style>
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body>
@@ -89,7 +39,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// ✅ YOUR FIREBASE CONFIG (already correct)
+// 🔥 YOUR FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyCyiFRwisqOTm-Ofu8F6LBBEdc3xRIzaYs",
   authDomain: "travel-map-af023.firebaseapp.com",
@@ -102,110 +52,41 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🌍 MAP
+// 🌍 ENGLISH MAP (FIXED)
 const map = L.map('map').setView([20, 0], 2);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap'
+}).addTo(map);
 
 // 📍 LOAD PINS
 async function loadPins() {
-  const snapshot = await getDocs(collection(db, "pins"));
+  const querySnapshot = await getDocs(collection(db, "pins"));
 
-  snapshot.forEach(docSnap => {
-    const pin = docSnap.data();
+  querySnapshot.forEach((docSnap) => {
+    const data = docSnap.data();
     const id = docSnap.id;
 
-    L.marker([pin.lat, pin.lng])
-      .addTo(map)
-      .bindPopup(createPopup(pin, id));
-  });
-}
+    const marker = L.marker([data.lat, data.lng]).addTo(map);
 
-// 🧱 POPUP
-function createPopup(pin, id) {
-  const div = document.createElement("div");
-  div.className = "popup";
-
-  div.innerHTML = `<h3>${pin.title}</h3><p>${pin.text}</p>`;
-
-  // 🎞 SLIDESHOW
-  if (pin.images && pin.images.length > 0) {
-    let index = 0;
-
-    const slider = document.createElement("div");
-    slider.className = "slider";
-
-    const slides = document.createElement("div");
-    slides.className = "slides";
-
-    pin.images.forEach(url => {
-      const img = document.createElement("img");
-      img.src = url;
-      slides.appendChild(img);
-    });
-
-    const left = document.createElement("button");
-    left.innerHTML = "‹";
-    left.className = "arrow left";
-
-    const right = document.createElement("button");
-    right.innerHTML = "›";
-    right.className = "arrow right";
-
-    function update() {
-      slides.style.transform = `translateX(-${index * 100}%)`;
+    let imagesHTML = "";
+    if (data.images && data.images.length > 0) {
+      data.images.forEach(img => {
+        imagesHTML += `<img src="${img}">`;
+      });
     }
 
-    left.onclick = () => {
-      index = (index - 1 + pin.images.length) % pin.images.length;
-      update();
-    };
-
-    right.onclick = () => {
-      index = (index + 1) % pin.images.length;
-      update();
-    };
-
-    slider.appendChild(slides);
-    slider.appendChild(left);
-    slider.appendChild(right);
-
-    div.appendChild(slider);
-  }
-
-  // ✏️ EDIT
-  const editBtn = document.createElement("button");
-  editBtn.innerText = "Edit ✏️";
-  editBtn.className = "btn edit";
-
-  editBtn.onclick = async () => {
-    const newTitle = prompt("Title:", pin.title);
-    const newText = prompt("Text:", pin.text);
-    const newImages = prompt("Images (comma separated):", pin.images.join(","));
-
-    await updateDoc(doc(db, "pins", id), {
-      title: newTitle,
-      text: newText,
-      images: newImages.split(",")
-    });
-
-    location.reload();
-  };
-
-  // 🗑 DELETE
-  const deleteBtn = document.createElement("button");
-  deleteBtn.innerText = "Delete 🗑";
-  deleteBtn.className = "btn delete";
-
-  deleteBtn.onclick = async () => {
-    await deleteDoc(doc(db, "pins", id));
-    location.reload();
-  };
-
-  div.appendChild(editBtn);
-  div.appendChild(deleteBtn);
-
-  return div;
+    marker.bindPopup(`
+      <div class="popup">
+        <h3>${data.title}</h3>
+        <p>${data.text}</p>
+        ${imagesHTML}
+        <br>
+        <button class="btn edit" onclick="editPin('${id}', '${data.title}', '${data.text}', '${data.images}')">Edit</button>
+        <button class="btn delete" onclick="deletePin('${id}')">Delete</button>
+      </div>
+    `);
+  });
 }
 
 // ➕ ADD PIN
@@ -221,11 +102,32 @@ map.on("click", async (e) => {
     lng: e.latlng.lng,
     title,
     text,
-    images: images.split(",")
+    images: images ? images.split(",") : []
   });
 
   location.reload();
 });
+
+// ✏️ EDIT
+window.editPin = async (id, oldTitle, oldText, oldImages) => {
+  const title = prompt("New title:", oldTitle);
+  const text = prompt("New text:", oldText);
+  const images = prompt("New images:", oldImages);
+
+  await updateDoc(doc(db, "pins", id), {
+    title,
+    text,
+    images: images.split(",")
+  });
+
+  location.reload();
+};
+
+// 🗑 DELETE
+window.deletePin = async (id) => {
+  await deleteDoc(doc(db, "pins", id));
+  location.reload();
+};
 
 // START
 loadPins();

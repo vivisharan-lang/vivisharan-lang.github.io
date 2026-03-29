@@ -11,18 +11,38 @@
     #map { height: 100vh; }
 
     .popup {
-      max-width: 420px; /* 👈 BIGGER POPUP */
-      font-size: 14px;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .image-container {
+      position: relative;
     }
 
     .popup img {
       width: 100%;
-      height: 300px; /* 👈 MUCH BIGGER IMAGE */
-      object-fit: contain; /* 👈 NO CROPPING */
-      background: #000; /* 👈 nice background for empty space */
+      height: 300px;
+      object-fit: contain;
+      background: #000;
       border-radius: 12px;
       margin-top: 10px;
     }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      font-size: 20px;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    .left { left: 10px; }
+    .right { right: 10px; }
 
     .popup button {
       width: 100%;
@@ -77,26 +97,34 @@ async function loadPins() {
   });
 }
 
-// 📌 ADD MARKER
+// 📌 ADD MARKER WITH SLIDESHOW
 function addMarker(data, id) {
-  let currentImage = 0;
 
-  function getImageHTML() {
-    if (!data.images || data.images.length === 0) return "";
-    return `<img src="${data.images[currentImage]}">`;
-  }
+  let currentImage = 0;
 
   const marker = L.marker([data.lat, data.lng]).addTo(map);
 
-  function updatePopup() {
+  function renderPopup() {
+
+    const hasImages = data.images && data.images.length > 0;
+
+    const imageHTML = hasImages ? `
+      <div class="image-container">
+        <img src="${data.images[currentImage]}">
+
+        ${data.images.length > 1 ? `
+          <button class="arrow left" onclick="prevImage('${id}')">&#8592;</button>
+          <button class="arrow right" onclick="nextImage('${id}')">&#8594;</button>
+        ` : ""}
+      </div>
+    ` : "";
+
     marker.bindPopup(`
       <div class="popup">
         <b>${data.title}</b><br>
         ${data.text || ""}
 
-        ${getImageHTML()}
-
-        <button onclick="nextImage('${id}')">Next Image</button>
+        ${imageHTML}
 
         <button class="edit-btn" onclick="editPin('${id}')">Edit</button>
         <button class="delete-btn" onclick="deletePin('${id}')">Delete</button>
@@ -104,15 +132,30 @@ function addMarker(data, id) {
     `);
   }
 
-  updatePopup();
+  renderPopup();
 
   window[`pin_${id}`] = {
     data,
     marker,
-    updatePopup,
+    renderPopup,
     currentImage
   };
 }
+
+// ➡️ NEXT IMAGE
+window.nextImage = function(id) {
+  const pin = window[`pin_${id}`];
+  pin.currentImage = (pin.currentImage + 1) % pin.data.images.length;
+  pin.renderPopup();
+};
+
+// ⬅️ PREVIOUS IMAGE
+window.prevImage = function(id) {
+  const pin = window[`pin_${id}`];
+  pin.currentImage =
+    (pin.currentImage - 1 + pin.data.images.length) % pin.data.images.length;
+  pin.renderPopup();
+};
 
 // ➕ ADD PIN
 map.on("click", async function(e) {
@@ -140,19 +183,7 @@ map.on("click", async function(e) {
 
 });
 
-// 🖼️ NEXT IMAGE
-window.nextImage = function(id) {
-  const pinObj = window[`pin_${id}`];
-
-  if (!pinObj.data.images || pinObj.data.images.length === 0) return;
-
-  pinObj.currentImage =
-    (pinObj.currentImage + 1) % pinObj.data.images.length;
-
-  pinObj.updatePopup();
-};
-
-// 🗑️ DELETE PIN
+// 🗑️ DELETE
 window.deletePin = async function(id) {
   if (!confirm("Delete this pin?")) return;
 
@@ -160,14 +191,13 @@ window.deletePin = async function(id) {
   location.reload();
 };
 
-// ✏️ EDIT PIN
+// ✏️ EDIT
 window.editPin = async function(id) {
-  const pinObj = window[`pin_${id}`];
-  const data = pinObj.data;
+  const pin = window[`pin_${id}`];
 
-  const newTitle = prompt("New title:", data.title);
-  const newText = prompt("New description:", data.text);
-  const newImages = prompt("Image URLs:", data.images.join(","));
+  const newTitle = prompt("New title:", pin.data.title);
+  const newText = prompt("New description:", pin.data.text);
+  const newImages = prompt("Image URLs:", pin.data.images.join(","));
 
   await updateDoc(doc(db, "pins", id), {
     title: newTitle,

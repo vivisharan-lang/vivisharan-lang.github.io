@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Vishi Sharan - Portfolio</title>
+  <title>Vishi Sharan</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
@@ -9,92 +9,132 @@
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
-      background-color: #93A4C1;
-      color: #000;
       text-align: center;
+      transition: 0.5s;
+    }
+
+    body.light {
+      background: linear-gradient(135deg, #93A4C1, #dbe5f5);
+      color: #1f2a44;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #1f2a44, #2c3e66);
+      color: white;
     }
 
     .container {
+      padding: 60px 20px;
       max-width: 900px;
       margin: auto;
-      padding: 60px 20px;
     }
 
     h1 {
       font-size: 36px;
     }
 
-    .intro {
-      margin-bottom: 40px;
-    }
-
     .grid {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
-      justify-content: center;
+      margin-top: 40px;
     }
 
     .card {
-      background: #D3DFF2;
-      padding: 20px;
-      border-radius: 12px;
-      width: 300px;
-      text-align: left;
+      background: rgba(211, 223, 242, 0.9);
+      padding: 25px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      transition: 0.3s;
+    }
+
+    body.dark .card {
+      background: rgba(40, 50, 80, 0.8);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
     }
 
     .btn {
       display: inline-block;
-      margin-top: 10px;
-      padding: 8px 12px;
+      margin-top: 15px;
+      padding: 10px;
       background: #B1B2AE;
-      color: black;
-      border-radius: 6px;
+      border-radius: 8px;
       text-decoration: none;
+      color: black;
     }
 
+    .toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #B1B2AE;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
   </style>
 </head>
 
-<body>
+<body class="light">
 
-  <div class="container">
+<div class="toggle" onclick="toggleMode()">🌙</div>
 
-    <h1>Hi, I'm Vishi 👋</h1>
+<div class="container">
 
-    <p class="intro">
-      Mechanical Engineer transitioning into Cloud Engineering.
-    </p>
+  <h1>Vishi Sharan</h1>
+  <p>Mechanical Engineer → Cloud & Software</p>
 
-    <div class="grid">
+  <div class="grid">
 
-      <div class="card">
-        <h2>☁️ Cloud Engineering</h2>
-        <p>Google Cloud, Docker, APIs</p>
-        <a class="btn" href="cloud.html">View Projects</a>
-      </div>
+    <div class="card">
+      <h3>☁️ Cloud Engineering</h3>
+      <p>Google Cloud & backend systems</p>
+      <a class="btn" href="cloud.html">View</a>
+    </div>
 
-      <div class="card">
-        <h2>💻 Programming</h2>
-        <p>Apps and software projects</p>
-        <a class="btn" href="programming.html">View</a>
-      </div>
+    <div class="card">
+      <h3>💻 Programming</h3>
+      <p>Apps & interactive projects</p>
+      <a class="btn" href="programming.html">View</a>
+    </div>
 
-      <div class="card">
-        <h2>📁 Experience</h2>
-        <p>Work and events</p>
-        <a class="btn" href="experience.html">View</a>
-      </div>
+    <div class="card">
+      <h3>📁 Experience</h3>
+      <p>Work & leadership</p>
+      <a class="btn" href="experience.html">View</a>
+    </div>
 
-      <div class="card">
-        <h2>👤 About Me</h2>
-        <p>Background and goals</p>
-        <a class="btn" href="about.html">Read</a>
-      </div>
-
+    <div class="card">
+      <h3>👤 About Me</h3>
+      <p>Background & story</p>
+      <a class="btn" href="about.html">View</a>
     </div>
 
   </div>
+
+</div>
+
+<script>
+function toggleMode() {
+  document.body.classList.toggle("dark");
+  document.body.classList.toggle("light");
+}
+
+document.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", function(e) {
+    e.preventDefault();
+    document.body.classList.add("fade-out");
+    setTimeout(() => window.location = this.href, 300);
+  });
+});
+</script>
 
 </body>
 </html>

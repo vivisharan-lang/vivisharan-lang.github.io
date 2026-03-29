@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vivi's Studio</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f7f7f7;
+      color: #222;
+    }
+
+    /* HERO */
+    .hero {
+      height: 70vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #eaeef5;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 400;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+
+    .hero p {
+      margin-top: 10px;
+      color: #555;
+      font-size: 16px;
+    }
+
+    /* GALLERY */
+    .gallery {
+      padding: 60px 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .item img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .item:hover img {
+      transform: scale(1.1);
+    }
+
+    .overlay {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+      color: white;
+      opacity: 0;
+      transition: 0.4s;
+    }
+
+    .item:hover .overlay {
+      opacity: 1;
+    }
+
+    /* FOOTER */
+    .footer {
+      text-align: center;
+      padding: 40px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Vivi’s Studio</h1>
+  <p>Handmade jewelry & creative expression</p>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery">
+
+  <div class="item">
+    <img src="YOUR_IMAGE_URL">
+    <div class="overlay">Handmade Bracelet</div>
+  </div>
+
+  <div class="item">
+    <img src="YOUR_IMAGE_URL">
+    <div class="overlay">Custom Piece</div>
+  </div>
+
+  <div class="item">
+    <img src="YOUR_IMAGE_URL">
+    <div class="overlay">Beaded Design</div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  Follow on Instagram: 
+  <a href="https://instagram.com/YOUR_USERNAME" target="_blank">@vivisstudio</a>
+</div>
+
+</body>
+</html>

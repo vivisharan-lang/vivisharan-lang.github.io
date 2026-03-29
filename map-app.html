@@ -10,30 +10,33 @@
     body { margin: 0; font-family: Arial; }
     #map { height: 100vh; }
 
-    /* 🔥 POPUP CONTAINER */
+    /* 🔥 FORCE LEAFLET POPUP SIZE */
+    .leaflet-popup-content {
+      width: 420px !important;   /* 👈 KEY FIX */
+      margin: 10px;
+    }
+
+    /* POPUP */
     .popup {
-      width: 500px;              /* 👈 wider = more square */
-      max-width: 90vw;           /* 👈 responsive */
-      padding: 10px;
+      width: 100%;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    /* IMAGE */
+    .popup img {
+      width: 100%;
+      height: 260px;            /* 👈 balanced size */
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 10px;
     }
 
     /* IMAGE CONTAINER */
     .image-container {
       position: relative;
-      margin-top: 10px;
     }
 
-    /* 🔥 IMAGE */
-    .popup img {
-      width: 100%;
-      height: 300px;             /* 👈 bigger image */
-      object-fit: cover;         /* 👈 no black bars */
-      border-radius: 14px;
-    }
-
-    /* 🔥 ARROWS */
+    /* ARROWS */
     .arrow {
       position: absolute;
       top: 50%;
@@ -41,14 +44,14 @@
       background: rgba(0,0,0,0.6);
       color: white;
       border: none;
-      font-size: 22px;
-      padding: 10px 14px;
+      font-size: 18px;
+      padding: 6px 10px;
       cursor: pointer;
       border-radius: 50%;
     }
 
-    .left { left: 10px; }
-    .right { right: 10px; }
+    .left { left: 8px; }
+    .right { right: 8px; }
 
     /* BUTTONS */
     .popup button {
@@ -59,16 +62,10 @@
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 14px;
     }
 
     .edit-btn { background: #3498db; color: white; }
     .delete-btn { background: #e74c3c; color: white; }
-
-    /* TITLE */
-    .popup b {
-      font-size: 18px;
-    }
 
   </style>
 </head>
@@ -102,7 +99,7 @@ const map = L.map('map').setView([20, 0], 2);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-// 📍 LOAD PINS
+// 📍 LOAD
 async function loadPins() {
   const snapshot = await getDocs(collection(db, "pins"));
 
@@ -111,7 +108,7 @@ async function loadPins() {
   });
 }
 
-// 📌 ADD MARKER WITH SLIDESHOW
+// 📌 MARKER
 function addMarker(data, id) {
 
   let currentImage = 0;
@@ -143,7 +140,9 @@ function addMarker(data, id) {
         <button class="edit-btn" onclick="editPin('${id}')">Edit</button>
         <button class="delete-btn" onclick="deletePin('${id}')">Delete</button>
       </div>
-    `);
+    `, {
+      maxWidth: 450   /* 👈 CRITICAL: controls popup size */
+    });
   }
 
   renderPopup();
@@ -156,14 +155,14 @@ function addMarker(data, id) {
   };
 }
 
-// ➡️ NEXT IMAGE
+// ➡️ NEXT
 window.nextImage = function(id) {
   const pin = window[`pin_${id}`];
   pin.currentImage = (pin.currentImage + 1) % pin.data.images.length;
   pin.renderPopup();
 };
 
-// ⬅️ PREVIOUS IMAGE
+// ⬅️ PREV
 window.prevImage = function(id) {
   const pin = window[`pin_${id}`];
   pin.currentImage =
@@ -171,7 +170,7 @@ window.prevImage = function(id) {
   pin.renderPopup();
 };
 
-// ➕ ADD PIN
+// ➕ ADD
 map.on("click", async function(e) {
 
   const title = prompt("Title:");
@@ -200,7 +199,6 @@ map.on("click", async function(e) {
 // 🗑️ DELETE
 window.deletePin = async function(id) {
   if (!confirm("Delete this pin?")) return;
-
   await deleteDoc(doc(db, "pins", id));
   location.reload();
 };

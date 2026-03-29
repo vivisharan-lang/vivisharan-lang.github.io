@@ -22,37 +22,42 @@
 
 <div id="map"></div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script type="module">
 
-<script>
+// 🔥 Firebase (MODERN VERSION)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } 
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// 🔥 FIREBASE CONFIG
+// ✅ YOUR CONFIG (CORRECT)
 const firebaseConfig = {
-  apiKey: "AIzaSyCyiFRwisqOTm-Ofu8F6LBBEdc3xRIzaYs",
-  authDomain: "travel-map-af023.firebaseapp.com",
-  projectId: "travel-map-af023"
+  apiKey: "AIzaSyA4gr4Esz5bOST3zHwQhfWbMVdHP9VYEvc",
+  authDomain: "map-app-cc49d.firebaseapp.com",
+  projectId: "map-app-cc49d",
+  storageBucket: "map-app-cc49d.firebasestorage.app",
+  messagingSenderId: "898386995342",
+  appId: "1:898386995342:web:b8b1723535380b04a4c1df"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// Init
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// 🌍 MAP (ENGLISH)
+// 🌍 Map
 const map = L.map('map').setView([20, 0], 2);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-// 📍 LOAD PINS
-function loadPins() {
-  db.collection("pins").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      addMarker(data);
-    });
+// 📍 Load pins
+async function loadPins() {
+  const querySnapshot = await getDocs(collection(db, "pins"));
+
+  querySnapshot.forEach((doc) => {
+    addMarker(doc.data());
   });
 }
 
-// 📌 ADD MARKER FUNCTION
+// 📌 Add marker
 function addMarker(data) {
   let imagesHTML = "";
 
@@ -67,14 +72,14 @@ function addMarker(data) {
     .bindPopup(`
       <div class="popup">
         <b>${data.title}</b><br>
-        ${data.text}
+        ${data.text || ""}
         ${imagesHTML}
       </div>
     `);
 }
 
-// ➕ ADD PIN
-map.on("click", function(e) {
+// ➕ Add pin
+map.on("click", async function(e) {
 
   const title = prompt("Title:");
   const text = prompt("Description:");
@@ -90,19 +95,17 @@ map.on("click", function(e) {
     images: images ? images.split(",") : []
   };
 
-  // SAVE TO FIREBASE
-  db.collection("pins").add(pin)
-  .then(() => {
-    addMarker(pin); // 👈 SHOW IMMEDIATELY
-  })
-  .catch(error => {
-    console.error("Error:", error);
-    alert("Something went wrong");
-  });
+  try {
+    await addDoc(collection(db, "pins"), pin);
+    addMarker(pin); // instant display
+  } catch (error) {
+    console.error("FULL ERROR:", error);
+    alert(error.message);
+  }
 
 });
 
-// START
+// Start
 loadPins();
 
 </script>

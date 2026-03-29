@@ -3,30 +3,21 @@
 <head>
   <title>Travel Map</title>
 
+  <!-- LEAFLET -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+  <!-- STYLE -->
   <style>
-    body { margin: 0; font-family: Arial; }
-    #map { height: 100vh; }
+    body {
+      margin: 0;
+      font-family: Arial;
+    }
 
-    .popup img {
+    #map {
+      height: 100vh;
       width: 100%;
-      border-radius: 10px;
-      margin-top: 10px;
     }
-
-    .btn {
-      margin-top: 8px;
-      padding: 5px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-right: 5px;
-    }
-
-    .edit { background: #d3dff2; }
-    .delete { background: #f2b3b3; }
   </style>
 </head>
 
@@ -34,100 +25,69 @@
 
 <div id="map"></div>
 
-<script type="module">
+<!-- FIREBASE (STABLE VERSION) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script>
 
 // 🔥 YOUR FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyCyiFRwisqOTm-Ofu8F6LBBEdc3xRIzaYs",
   authDomain: "travel-map-af023.firebaseapp.com",
-  projectId: "travel-map-af023",
-  storageBucket: "travel-map-af023.firebasestorage.app",
-  messagingSenderId: "277891709023",
-  appId: "1:277891709023:web:24e2003a4959ffea7d83ea"
+  projectId: "travel-map-af023"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// INIT FIREBASE
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// 🌍 ENGLISH MAP (FIXED)
+// 🌍 MAP (ENGLISH VERSION)
 const map = L.map('map').setView([20, 0], 2);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap'
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap & CartoDB'
 }).addTo(map);
 
 // 📍 LOAD PINS
-async function loadPins() {
-  const querySnapshot = await getDocs(collection(db, "pins"));
+function loadPins() {
+  db.collection("pins").get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const data = doc.data();
 
-  querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    const id = docSnap.id;
-
-    const marker = L.marker([data.lat, data.lng]).addTo(map);
-
-    let imagesHTML = "";
-    if (data.images && data.images.length > 0) {
-      data.images.forEach(img => {
-        imagesHTML += `<img src="${img}">`;
-      });
-    }
-
-    marker.bindPopup(`
-      <div class="popup">
-        <h3>${data.title}</h3>
-        <p>${data.text}</p>
-        ${imagesHTML}
-        <br>
-        <button class="btn edit" onclick="editPin('${id}', '${data.title}', '${data.text}', '${data.images}')">Edit</button>
-        <button class="btn delete" onclick="deletePin('${id}')">Delete</button>
-      </div>
-    `);
+      L.marker([data.lat, data.lng])
+        .addTo(map)
+        .bindPopup(`<b>${data.title}</b><br>${data.text}`);
+    });
+  }).catch(error => {
+    console.error("Error loading pins:", error);
   });
 }
 
 // ➕ ADD PIN
-map.on("click", async (e) => {
+map.on("click", function(e) {
+
   const title = prompt("Title:");
   const text = prompt("Description:");
-  const images = prompt("Image URLs (comma separated):");
 
   if (!title) return;
 
-  await addDoc(collection(db, "pins"), {
+  db.collection("pins").add({
     lat: e.latlng.lat,
     lng: e.latlng.lng,
-    title,
-    text,
-    images: images ? images.split(",") : []
+    title: title,
+    text: text
+  })
+  .then(() => {
+    alert("Pin saved!");
+    location.reload();
+  })
+  .catch(error => {
+    console.error("Error saving pin:", error);
+    alert("Error saving pin");
   });
 
-  location.reload();
 });
-
-// ✏️ EDIT
-window.editPin = async (id, oldTitle, oldText, oldImages) => {
-  const title = prompt("New title:", oldTitle);
-  const text = prompt("New text:", oldText);
-  const images = prompt("New images:", oldImages);
-
-  await updateDoc(doc(db, "pins", id), {
-    title,
-    text,
-    images: images.split(",")
-  });
-
-  location.reload();
-};
-
-// 🗑 DELETE
-window.deletePin = async (id) => {
-  await deleteDoc(doc(db, "pins", id));
-  location.reload();
-};
 
 // START
 loadPins();

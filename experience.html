@@ -3,22 +3,16 @@
 <head>
   <title>Experience</title>
 
-  <!-- FONTS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
       color: white;
     }
 
-    /* BACKGROUND */
     .hero {
       min-height: 100vh;
       background: url("IMG_5946.jpg") no-repeat center center/cover;
@@ -51,13 +45,12 @@
       margin-bottom: 40px;
     }
 
-    /* CARD */
     .card {
       background: rgba(255,255,255,0.35);
       backdrop-filter: blur(14px);
       border-radius: 16px;
       padding: 25px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       border: 1px solid rgba(255,255,255,0.4);
     }
 
@@ -66,55 +59,19 @@
       margin-bottom: 10px;
     }
 
-    .card p {
+    .card h3 {
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    .card p, .card li {
       color: rgba(255,255,255,0.9);
       margin-bottom: 10px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
-    /* TIMELINE */
-    .timeline {
-      position: relative;
-      margin-top: 20px;
-      padding-left: 30px;
-    }
+    ul { padding-left: 20px; }
 
-    .timeline::before {
-      content: "";
-      position: absolute;
-      left: 10px;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: rgba(255,255,255,0.5);
-    }
-
-    .timeline-item {
-      position: relative;
-      margin-bottom: 30px;
-    }
-
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      left: -2px;
-      top: 5px;
-      width: 12px;
-      height: 12px;
-      background: white;
-      border-radius: 50%;
-    }
-
-    .timeline-item h3 {
-      margin-bottom: 5px;
-    }
-
-    .timeline-item span {
-      font-size: 12px;
-      opacity: 0.7;
-    }
-
-    /* IMAGE GRID */
     .image-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -124,12 +81,11 @@
 
     .image-grid img {
       width: 100%;
-      height: 160px;
+      height: 180px;
       object-fit: cover;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
-    /* SINGLE IMAGE */
     .image-single {
       text-align: center;
       margin-top: 10px;
@@ -137,7 +93,7 @@
 
     .image-single img {
       width: 70%;
-      max-width: 450px;
+      max-width: 500px;
       height: auto;
       border-radius: 12px;
     }
@@ -149,7 +105,6 @@
       margin-top: 5px;
     }
 
-    /* BACK */
     .back {
       display: inline-block;
       margin-bottom: 30px;
@@ -172,24 +127,28 @@
 
     <h1>Experience</h1>
 
-    <!-- CURRENT ROLE -->
+    <!-- ERICSSON -->
     <div class="card">
       <h2>Ericsson — Mechanical Developer</h2>
 
       <p>
-        I am currently working on 6G testbeds, contributing to the development of test systems that enable continuous integration and validation of emerging technologies.
+        I am currently working on 6G testbeds, where I contribute to the development of test systems that enable continuous integration and validation of emerging technologies.
       </p>
 
       <p>
-        A testbed is a controlled experimental environment where new technologies can be developed, tested, and evaluated before real-world deployment.
+        A testbed is a controlled experimental environment where new technologies, systems, and concepts can be developed, tested, and evaluated before being deployed in real-world applications.
       </p>
 
       <p>
-        I collaborate with cross-functional teams to support the design and development of these systems.
+        In my role as a mechanical developer, I collaborate with multiple cross-functional teams to support the design and development of these testbeds, ensuring they meet both technical and operational requirements.
       </p>
 
       <p>
-        In parallel, I am part of the core team of <b>GenNext at Ericsson</b>, working with initiatives focused on inclusion, networking, and community building.
+        In addition to my technical work, I am part of the core team of <b>GenNext at Ericsson</b>, which focuses on fostering inclusion, diversity, and a sense of belonging for early-career professionals.
+      </p>
+
+      <p>
+        As part of this initiative, we organize social and learning events to engage our community and create a supportive environment for networking, knowledge sharing, and professional growth.
       </p>
     </div>
 
@@ -198,7 +157,12 @@
       <h2>Extracurricular & Voluntary Activities</h2>
 
       <h3>Panel Discussion — Ericsdotter Mentorship</h3>
-      <p>Shared my experience as a mentee in Ericsson’s mentorship program.</p>
+      <p>
+        I was invited by the Employee Resource Group <b>Ericsdotter at Ericsson</b> to participate in a panel discussion, where I shared my experience as a mentee in their mentorship program.
+      </p>
+      <p>
+        It was a rewarding experience to reflect on my development and exchange perspectives in an open and supportive environment. I especially appreciated connecting with inspiring women across the organization.
+      </p>
 
       <div class="image-grid">
         <img src="IMG_1702.jpg">
@@ -207,7 +171,15 @@
       <p class="image-source">Source: Ericsdotter at Ericsson</p>
 
       <h3>Panel Discussion — GenNext x NextGen</h3>
-      <p>Spoke to new employees about early career experience and GenNext.</p>
+      <p>
+        As part of the core team of <b>GenNext at Ericsson</b>, I participated in a panel discussion for newly hired employees in September 2025.
+      </p>
+      <p>
+        I shared my experience as a new graduate, discussed what GenNext represents, and provided insights and advice to support newcomers in their transition.
+      </p>
+      <p>
+        Following the panel, I co-organized an afterwork event at KI21, creating opportunities for networking and community building in a more informal setting.
+      </p>
 
       <div class="image-single">
         <img src="IMG_1570.jpg">
@@ -215,53 +187,55 @@
       <p class="image-source">Source: GenNext member</p>
 
       <h3>ET Lunch with GenNext Core Team</h3>
-      <p>Discussion with leadership on importance of early-career initiatives.</p>
+      <p>
+        As part of the GenNext core team, I participated in a lunch session with members of the ET organization.
+      </p>
+      <p>
+        The discussion focused on highlighting the importance of GenNext initiatives and how a campus-style office environment in Kista supports networking, collaboration, and knowledge sharing across teams.
+      </p>
 
       <div class="image-single">
         <img src="IMG_6933.jpeg">
       </div>
       <p class="image-source">Source: LinkedIn</p>
+
     </div>
 
-    <!-- TIMELINE -->
+    <!-- PAST EXPERIENCE -->
     <div class="card">
       <h2>Past Experience</h2>
 
-      <div class="timeline">
+      <h3>Master Thesis — Battery Energy Storage Systems (BESS)</h3>
+      <p>
+        For my master thesis, I worked on a project focused on Battery Energy Storage Systems (BESS), exploring how the insurance process for these systems can be improved.
+      </p>
+      <p>
+        The project was conducted in collaboration with Marsh and combined engineering knowledge with risk and insurance perspectives, providing insight into how emerging technologies are evaluated in real-world applications.
+      </p>
 
-        <div class="timeline-item">
-          <h3>Master Thesis — BESS Systems</h3>
-          <span>2025</span>
-          <p>
-            Worked with Marsh on improving insurance processes for Battery Energy Storage Systems.
-          </p>
-        </div>
+      <h3>Zurich Insurance — Student Underwriter (2025)</h3>
+      <p>
+        At Zurich Insurance, I worked as a student underwriter, gaining experience in evaluating technical systems from a financial and risk perspective.
+      </p>
+      <p>
+        This role expanded my understanding of how engineering solutions are assessed beyond technical performance, and strengthened my interest in the intersection between engineering and business.
+      </p>
 
-        <div class="timeline-item">
-          <h3>Zurich Insurance — Student Underwriter</h3>
-          <span>2025</span>
-          <p>
-            Gained insight into financial risk evaluation of engineering systems.
-          </p>
-        </div>
+      <h3>Symcel — Production & Logistics</h3>
+      <p>
+        At Symcel, a biotech startup, I supported the production and logistics team in an early-stage environment.
+      </p>
+      <p>
+        This experience provided hands-on exposure to operational workflows, supply chain coordination, and the challenges associated with scaling production in a growing company.
+      </p>
 
-        <div class="timeline-item">
-          <h3>Symcel — Production & Logistics</h3>
-          <span>Startup Experience</span>
-          <p>
-            Supported production and logistics in a biotech startup environment.
-          </p>
-        </div>
-
-        <div class="timeline-item">
-          <h3>Study Buddy</h3>
-          <span>Academic Role</span>
-          <p>
-            Supported students and fostered collaborative learning.
-          </p>
-        </div>
-
-      </div>
+      <h3>Study Buddy</h3>
+      <p>
+        I worked as a study buddy, supporting fellow students in their learning and helping to create a collaborative and supportive study environment.
+      </p>
+      <p>
+        This role strengthened my communication skills and ability to explain complex concepts in a clear and approachable way.
+      </p>
 
     </div>
 

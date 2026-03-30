@@ -3,132 +3,205 @@
 <head>
   <title>Cloud Network Monitoring API</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- SAME FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
+    * {
       margin: 0;
-      background-color: #93A4C1;
-      color: #000;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .container {
+    body {
+      font-family: 'Inter', sans-serif;
+      color: white;
+    }
+
+    /* BACKGROUND */
+    .hero {
+      min-height: 100vh;
+      background: url("IMG_5946.jpg") no-repeat center center/cover;
+      position: relative;
+      padding: 60px 20px;
+    }
+
+    /* OVERLAY */
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.45)
+      );
+      top: 0;
+      left: 0;
+    }
+
+    /* CONTENT */
+    .content {
+      position: relative;
+      z-index: 2;
       max-width: 900px;
       margin: auto;
-      padding: 40px 20px;
     }
 
-    .card {
-      background: #D3DFF2;
-      padding: 25px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
+    /* TITLE */
     h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
       text-align: center;
+      margin-bottom: 40px;
     }
 
-    h2 {
-      margin-top: 0;
+    /* CARD */
+    .card {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(14px);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.4);
+      transition: 0.3s;
     }
 
-    a {
-      color: black;
+    .card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.45);
     }
 
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 10px;
+    }
+
+    .card p, .card li {
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 10px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    /* BUTTON */
     .btn {
       display: inline-block;
       margin-top: 10px;
-      padding: 10px 15px;
-      background: #B1B2AE;
+      padding: 12px 18px;
+      background: rgba(255,255,255,0.85);
       color: black;
-      border-radius: 6px;
+      border-radius: 10px;
       text-decoration: none;
+      font-weight: bold;
+      transition: 0.2s;
     }
 
+    .btn:hover {
+      background: white;
+    }
+
+    /* BACK */
     .back {
       display: inline-block;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      color: white;
       text-decoration: none;
-      color: black;
+      opacity: 0.8;
     }
+
+    .back:hover {
+      opacity: 1;
+    }
+
+    a {
+      color: white;
+      font-weight: bold;
+    }
+
   </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="hero">
 
-  <a class="back" href="cloud.html">← Back to Cloud Projects</a>
+  <div class="overlay"></div>
 
-  <h1>☁️ Cloud Network Monitoring API</h1>
+  <div class="content">
 
-  <div class="card">
-    <h2>🧠 What is this project?</h2>
-    <p>
-      This is a cloud-based backend API that simulates a telecom network monitoring system.  
-      It provides endpoints to check system health and network traffic.
-    </p>
-  </div>
+    <a class="back" href="cloud.html">← Back</a>
 
-  <div class="card">
-    <h2>⚙️ What does it do?</h2>
-    <ul>
-      <li>Returns network status</li>
-      <li>Shows system health</li>
-      <li>Simulates traffic load</li>
-    </ul>
-  </div>
+    <h1>Cloud Network Monitoring API</h1>
 
-  <div class="card">
-    <h2>🌍 Live Demo</h2>
-    <p>
-      <a href="https://network-api-204677011824.europe-west1.run.app" target="_blank">
-        Open API
-      </a>
-    </p>
-    <p>
-      Try:
-      <br>/ → status  
-      <br>/health → health check  
-      <br>/traffic → traffic
-    </p>
-  </div>
+    <div class="card">
+      <h2>What is this project?</h2>
+      <p>
+        A cloud-based backend API that simulates a telecom network monitoring system.  
+        It provides endpoints to check system health and network traffic.
+      </p>
+    </div>
 
-  <div class="card">
-    <h2>🛠️ How I built it</h2>
+    <div class="card">
+      <h2>What does it do?</h2>
+      <ul>
+        <li>Returns network status</li>
+        <li>Shows system health</li>
+        <li>Simulates traffic load</li>
+      </ul>
+    </div>
 
-    <p><b>1. Created a backend API</b><br>
-    Used Python + Flask and built endpoints for status, health, and traffic.</p>
+    <div class="card">
+      <h2>Live Demo</h2>
+      <p>
+        <a href="https://network-api-204677011824.europe-west1.run.app" target="_blank">
+          Open API →
+        </a>
+      </p>
+      <p>
+        Try:
+        <br>/ → status  
+        <br>/health → health check  
+        <br>/traffic → traffic
+      </p>
+    </div>
 
-    <p><b>2. Containerized the app</b><br>
-    Used Docker and created a Dockerfile to package the application.</p>
+    <div class="card">
+      <h2>How I built it</h2>
 
-    <p><b>3. Deployed to Google Cloud</b><br>
-    Used Cloud Run and Artifact Registry to deploy and host the app.</p>
+      <p><b>1. Backend API</b><br>
+      Built using Python + Flask with endpoints for status, health, and traffic.</p>
 
-    <p><b>4. Debugged deployment issues</b><br>
-    Fixed IAM permission errors and managed service accounts.</p>
+      <p><b>2. Containerization</b><br>
+      Used Docker to package the application.</p>
 
-  </div>
+      <p><b>3. Cloud Deployment</b><br>
+      Deployed using Google Cloud Run and Artifact Registry.</p>
 
-  <div class="card">
-    <h2>🧠 What I learned</h2>
-    <ul>
-      <li>How cloud services run backend applications</li>
-      <li>How Docker containers work</li>
-      <li>How to deploy services using Cloud Run</li>
-      <li>How to debug real cloud permission issues</li>
-    </ul>
-  </div>
+      <p><b>4. Debugging</b><br>
+      Resolved IAM permission issues and managed service accounts.</p>
 
-  <div class="card">
-    <h2>💬 Why this is relevant</h2>
-    <p>
-      This project simulates how telecom systems expose APIs for monitoring network health and traffic in cloud environments.
-    </p>
+    </div>
+
+    <div class="card">
+      <h2>What I learned</h2>
+      <ul>
+        <li>How cloud services run backend systems</li>
+        <li>How Docker containers work</li>
+        <li>How to deploy with Cloud Run</li>
+        <li>How to debug real cloud permission issues</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Why this matters</h2>
+      <p>
+        This project reflects how telecom systems expose APIs for monitoring network health and traffic in modern cloud environments.
+      </p>
+    </div>
+
   </div>
 
 </div>

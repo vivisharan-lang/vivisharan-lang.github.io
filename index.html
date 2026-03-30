@@ -25,7 +25,6 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
     }
 
@@ -37,21 +36,20 @@
       background: linear-gradient(
         to bottom,
         rgba(0,0,0,0.15),
-        rgba(0,0,0,0.25)
+        rgba(0,0,0,0.3)
       );
     }
 
-    /* TEXT */
+    /* TEXT (TOP POSITIONED) */
     .content {
-      position: relative;
+      position: absolute;
+      top: 18%; /* 👈 KEY FIX: consistent placement */
       text-align: center;
       color: white;
       z-index: 2;
 
-      /* 👇 KEY FIX */
-      transform: translateY(-220px);
-
       opacity: 0;
+      transform: translateY(20px);
       animation: fadeIn 1.5s ease forwards;
     }
 
@@ -65,19 +63,16 @@
     .content p {
       font-size: 18px;
       opacity: 0.85;
-      margin-bottom: 20px; /* spacing from cards */
     }
 
     /* CARDS */
     .cards {
       position: absolute;
-      bottom: 20px;
-
+      bottom: 40px; /* 👈 slightly lower */
       display: grid;
       grid-template-columns: repeat(2, 240px);
       grid-template-rows: repeat(2, 120px);
       gap: 20px;
-
       z-index: 2;
 
       opacity: 0;
@@ -88,19 +83,19 @@
 
     /* CARD STYLE */
     .card {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.22);
       backdrop-filter: blur(12px);
       border-radius: 14px;
       padding: 20px;
       text-align: center;
       transition: all 0.3s ease;
       cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.3);
     }
 
     .card:hover {
       transform: translateY(-6px) scale(1.02);
-      background: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.32);
     }
 
     .card h3 {
@@ -130,7 +125,7 @@
     /* MOBILE */
     @media(max-width: 600px) {
       .content {
-        transform: translateY(-80px);
+        top: 12%;
       }
 
       .content h1 {
@@ -139,7 +134,7 @@
 
       .cards {
         grid-template-columns: 1fr;
-        bottom: 30px;
+        bottom: 20px;
       }
     }
 

@@ -3,7 +3,7 @@
 <head>
   <title>Experience</title>
 
-  <!-- SAME FONTS -->
+  <!-- FONTS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
@@ -58,7 +58,7 @@
 
     /* CARD */
     .card {
-      background: rgba(255, 255, 255, 0.35); /* 👈 clearer */
+      background: rgba(255, 255, 255, 0.35);
       backdrop-filter: blur(14px);
       border-radius: 16px;
       padding: 25px;
@@ -78,20 +78,49 @@
     }
 
     .card h3 {
-      margin-top: 15px;
-      margin-bottom: 5px;
+      margin-top: 20px;
+      margin-bottom: 8px;
     }
 
-    .card p {
+    .card p, .card li {
       color: rgba(255,255,255,0.9);
       margin-bottom: 10px;
+      line-height: 1.5;
     }
 
-    /* IMAGES */
-    .card img {
+    ul {
+      padding-left: 20px;
+    }
+
+    /* IMAGE GRID */
+    .image-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .image-grid img {
       width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    /* SINGLE IMAGE */
+    .image-single img {
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
       border-radius: 12px;
       margin-top: 10px;
+    }
+
+    /* IMAGE SOURCE */
+    .image-source {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 6px;
     }
 
     /* BACK BUTTON */
@@ -122,7 +151,7 @@
 
     <h1>Experience</h1>
 
-    <!-- CURRENT JOB -->
+    <!-- ERICSSON -->
     <div class="card">
       <h2>Ericsson — Mechanical Developer</h2>
 
@@ -135,36 +164,70 @@
       </p>
     </div>
 
-    <!-- EXTRA -->
+    <!-- EXTRACURRICULAR -->
     <div class="card">
-      <h2>Extra Activities</h2>
+      <h2>Extracurricular & Voluntary Activities</h2>
 
-      <h3>GenNext</h3>
       <p>
-        Participated in GenNext initiatives including leadership events and networking opportunities.
+        Alongside my technical role, I actively engage in extracurricular and voluntary initiatives focused on leadership, networking, and knowledge sharing within Ericsson.
       </p>
 
-      <p>Panel discussion & leadership lunch:</p>
-      <img src="YOUR_IMAGE_URL_HERE">
-      <img src="YOUR_IMAGE_URL_HERE">
-
-      <h3>Other Panels</h3>
-      <p>
-        Participated in additional panel discussions, contributing perspectives and engaging in industry conversations.
-      </p>
-    </div>
-
-    <!-- PAST -->
-    <div class="card">
-      <h2>Past Experience</h2>
+      <!-- ERICSDOTTER -->
+      <h3>Panel Discussion — Ericsdotter Mentorship</h3>
 
       <p>
-        Includes part-time roles alongside studies and my master thesis work.
+        I was invited by the Employee Resource Group <b>Ericsdotter at Ericsson</b> to participate in a panel discussion, where I shared my experience as a mentee in their mentorship program.
       </p>
 
       <p>
-        These experiences helped build a strong foundation in both technical problem solving and professional collaboration.
+        It was a rewarding opportunity to reflect on my development and exchange perspectives in an open and supportive environment. I especially valued connecting with inspiring women across the organization.
       </p>
+
+      <div class="image-grid">
+        <img src="IMG_1702.jpg">
+        <img src="IMG_1701.jpg">
+      </div>
+
+      <p class="image-source">Source: Ericsdotter at Ericsson</p>
+
+      <!-- GENNEXT -->
+      <h3>Panel Discussion — GenNext x NextGen</h3>
+
+      <p>
+        As part of the core team of <b>GenNext at Ericsson</b>, I participated in a panel discussion for newly hired employees in September 2025.
+      </p>
+
+      <p>
+        I shared my experience as a new graduate, discussed what GenNext represents for early-career employees, and provided insights to support newcomers in their transition.
+      </p>
+
+      <p>
+        Following the panel, I co-organized an afterwork event at KI21, creating opportunities for networking and community building.
+      </p>
+
+      <div class="image-single">
+        <img src="IMG_1570.jpg">
+      </div>
+
+      <p class="image-source">Source: GenNext member</p>
+
+      <!-- ET LUNCH -->
+      <h3>ET Lunch with GenNext Core Team</h3>
+
+      <p>
+        As part of the GenNext core team, I participated in a lunch session with members of the ET organization.
+      </p>
+
+      <p>
+        The discussion focused on the importance of GenNext initiatives and how a campus-style office environment in Kista supports networking, collaboration, and knowledge sharing.
+      </p>
+
+      <div class="image-single">
+        <img src="IMG_6933.jpeg">
+      </div>
+
+      <p class="image-source">Source: LinkedIn</p>
+
     </div>
 
   </div>

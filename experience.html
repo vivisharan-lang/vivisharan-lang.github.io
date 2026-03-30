@@ -20,15 +20,16 @@
       padding: 60px 20px;
     }
 
+    /* ✅ FIXED OVERLAY */
     .overlay {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: linear-gradient(
         to bottom,
         rgba(0,0,0,0.25),
         rgba(0,0,0,0.45)
       );
+      pointer-events: none;
     }
 
     .content {
@@ -231,7 +232,7 @@
 
       <h3>Study Buddy</h3>
       <p>
-        I worked as a study buddy, supporting fellow students in their learning and helping to create a collaborative and supportive study environment.
+        I worked as a study buddy, supporting high school students in their learning and helping to create a collaborative and supportive study environment.
       </p>
       <p>
         This role strengthened my communication skills and ability to explain complex concepts in a clear and approachable way.

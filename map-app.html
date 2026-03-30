@@ -10,50 +10,49 @@
     body { margin: 0; font-family: Arial; }
     #map { height: 100vh; }
 
-    /* 🔥 FORCE LEAFLET POPUP SIZE */
     .leaflet-popup-content {
-      width: 420px !important;   /* 👈 KEY FIX */
+      width: 420px !important;
       margin: 10px;
     }
 
-    /* POPUP */
     .popup {
       width: 100%;
       text-align: center;
     }
 
-    /* IMAGE */
     .popup img {
       width: 100%;
-      height: 260px;            /* 👈 balanced size */
+      height: 260px;
       object-fit: cover;
       border-radius: 12px;
       margin-top: 10px;
     }
 
-    /* IMAGE CONTAINER */
     .image-container {
       position: relative;
     }
 
-    /* ARROWS */
+    /* ✅ FIXED ARROWS */
     .arrow {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.6);
+      bottom: 12px; /* moved down */
+      background: rgba(0,0,0,0.65);
       color: white;
       border: none;
       font-size: 18px;
-      padding: 6px 10px;
+      padding: 8px 12px;
       cursor: pointer;
-      border-radius: 50%;
+      border-radius: 10px;
+      transition: 0.2s;
     }
 
-    .left { left: 8px; }
-    .right { right: 8px; }
+    .arrow:hover {
+      background: rgba(0,0,0,0.85);
+    }
 
-    /* BUTTONS */
+    .left { left: 12px; }
+    .right { right: 12px; }
+
     .popup button {
       width: 100%;
       margin-top: 10px;
@@ -81,7 +80,6 @@ import {
   getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc 
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyA4gr4Esz5bOST3zHwQhfWbMVdHP9VYEvc",
   authDomain: "map-app-cc49d.firebaseapp.com",
@@ -94,36 +92,37 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🌍 MAP
 const map = L.map('map').setView([20, 0], 2);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-// 📍 LOAD
 async function loadPins() {
   const snapshot = await getDocs(collection(db, "pins"));
-
   snapshot.forEach(docSnap => {
     addMarker(docSnap.data(), docSnap.id);
   });
 }
 
-// 📌 MARKER
 function addMarker(data, id) {
-
-  let currentImage = 0;
 
   const marker = L.marker([data.lat, data.lng]).addTo(map);
 
+  window[`pin_${id}`] = {
+    data,
+    marker,
+    currentImage: 0
+  };
+
   function renderPopup() {
 
-    const hasImages = data.images && data.images.length > 0;
+    const pin = window[`pin_${id}`];
+    const hasImages = pin.data.images && pin.data.images.length > 0;
 
     const imageHTML = hasImages ? `
       <div class="image-container">
-        <img src="${data.images[currentImage]}">
+        <img src="${pin.data.images[pin.currentImage]}">
 
-        ${data.images.length > 1 ? `
+        ${pin.data.images.length > 1 ? `
           <button class="arrow left" onclick="prevImage('${id}')">&#8592;</button>
           <button class="arrow right" onclick="nextImage('${id}')">&#8594;</button>
         ` : ""}
@@ -132,8 +131,8 @@ function addMarker(data, id) {
 
     marker.bindPopup(`
       <div class="popup">
-        <b>${data.title}</b><br>
-        ${data.text || ""}
+        <b>${pin.data.title}</b><br>
+        ${pin.data.text || ""}
 
         ${imageHTML}
 
@@ -141,28 +140,20 @@ function addMarker(data, id) {
         <button class="delete-btn" onclick="deletePin('${id}')">Delete</button>
       </div>
     `, {
-      maxWidth: 450   /* 👈 CRITICAL: controls popup size */
-    });
+      maxWidth: 450
+    }).openPopup();
   }
 
+  window[`pin_${id}`].renderPopup = renderPopup;
   renderPopup();
-
-  window[`pin_${id}`] = {
-    data,
-    marker,
-    renderPopup,
-    currentImage
-  };
 }
 
-// ➡️ NEXT
 window.nextImage = function(id) {
   const pin = window[`pin_${id}`];
   pin.currentImage = (pin.currentImage + 1) % pin.data.images.length;
   pin.renderPopup();
 };
 
-// ⬅️ PREV
 window.prevImage = function(id) {
   const pin = window[`pin_${id}`];
   pin.currentImage =
@@ -170,7 +161,6 @@ window.prevImage = function(id) {
   pin.renderPopup();
 };
 
-// ➕ ADD
 map.on("click", async function(e) {
 
   const title = prompt("Title:");
@@ -196,14 +186,12 @@ map.on("click", async function(e) {
 
 });
 
-// 🗑️ DELETE
 window.deletePin = async function(id) {
   if (!confirm("Delete this pin?")) return;
   await deleteDoc(doc(db, "pins", id));
   location.reload();
 };
 
-// ✏️ EDIT
 window.editPin = async function(id) {
   const pin = window[`pin_${id}`];
 
@@ -220,7 +208,6 @@ window.editPin = async function(id) {
   location.reload();
 };
 
-// START
 loadPins();
 
 </script>
